@@ -1,37 +1,46 @@
 package com.example.petadoptionapi;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 public class PetController {
 
-    private final PetRepository repo;
+    private final PetRepository repository;
 
-    public PetController(PetRepository repo) {
-        this.repo = repo;
+    public PetController(PetRepository repository) {
+        this.repository = repository;
     }
 
     @GetMapping("/pets")
-    public Iterable<Pet> getPets() {
-        return repo.findAll();
-    }
-
-    @GetMapping("/pets/{id}")
-    public Pet getPetById(@PathVariable int id) {
-        return repo.findById(id).orElse(null);
+    public List<Pet> getPets() {
+        return repository.findAll();
     }
 
     @PostMapping("/pets")
-    public Pet addPet(@RequestBody Pet pet) {
-        return repo.save(pet);
+    public String addPet(@RequestBody Pet pet) {
+        repository.save(pet);
+        return "Pet added successfully!";
     }
 
     @DeleteMapping("/pets/{id}")
     public String deletePet(@PathVariable int id) {
-        repo.deleteById(id);
-        return "Pet deleted with id = " + id;
+        repository.deleteById(id);
+        return "Pet deleted successfully!";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteFromBrowser(@PathVariable int id) {
+        repository.deleteById(id);
+        return "Pet with ID " + id + " deleted successfully!";
+    }
+
+    @PutMapping("/pets/{id}")
+    public String updateAge(@PathVariable int id,
+                            @RequestBody Pet pet) {
+
+        repository.updateAge(id, pet.getAge());
+        return "Pet age updated successfully!";
     }
 }

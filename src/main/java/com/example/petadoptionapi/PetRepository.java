@@ -25,4 +25,28 @@ public class PetRepository {
                 )
         );
     }
+
+    public void save(Pet pet) {
+        jdbc.update(
+                "INSERT INTO pet(name, type, age) VALUES (?, ?, ?)",
+                pet.getName(),
+                pet.getType(),
+                pet.getAge()
+        );
+    }
+
+    public void deleteById(int id) {
+        jdbc.update(
+                "DELETE FROM pet WHERE id = ?",
+                id
+        );
+    }
+
+    public void updateAge(int id, int age) {
+        jdbc.update(
+                "UPDATE pet SET age = ? WHERE id = ?",
+                age,
+                id
+        );
+    }
 }
