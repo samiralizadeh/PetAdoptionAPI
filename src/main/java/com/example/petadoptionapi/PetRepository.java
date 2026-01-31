@@ -42,6 +42,15 @@ public class PetRepository {
         );
     }
 
+    public void savePet(Pet pet) {
+        jdbc.update(
+                "INSERT INTO pet(name, type, age) VALUES (?, ?, ?)",
+                pet.getName(),
+                pet.getType(),
+                pet.getAge()
+        );
+    }
+
     public void updateAge(int id, int age) {
         jdbc.update(
                 "UPDATE pet SET age = ? WHERE id = ?",
@@ -49,4 +58,12 @@ public class PetRepository {
                 id
         );
     }
+
+    public void updatePet(int id, String name, String type, int age) {
+        jdbc.update(
+                "UPDATE pet SET name=?, type=?, age=? WHERE id=?",
+                name, type, age, id
+        );
+    }
+
 }
