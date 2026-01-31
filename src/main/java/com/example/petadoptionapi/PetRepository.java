@@ -2,7 +2,6 @@ package com.example.petadoptionapi;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 @Repository
@@ -26,36 +25,12 @@ public class PetRepository {
         );
     }
 
-    public void save(Pet pet) {
-        jdbc.update(
-                "INSERT INTO pet(name, type, age) VALUES (?, ?, ?)",
-                pet.getName(),
-                pet.getType(),
-                pet.getAge()
-        );
-    }
-
-    public void deleteById(int id) {
-        jdbc.update(
-                "DELETE FROM pet WHERE id = ?",
-                id
-        );
-    }
-
     public void savePet(Pet pet) {
         jdbc.update(
                 "INSERT INTO pet(name, type, age) VALUES (?, ?, ?)",
                 pet.getName(),
                 pet.getType(),
                 pet.getAge()
-        );
-    }
-
-    public void updateAge(int id, int age) {
-        jdbc.update(
-                "UPDATE pet SET age = ? WHERE id = ?",
-                age,
-                id
         );
     }
 
@@ -66,4 +41,10 @@ public class PetRepository {
         );
     }
 
+    public void deleteById(int id) {
+        jdbc.update(
+                "DELETE FROM pet WHERE id = ?",
+                id
+        );
+    }
 }

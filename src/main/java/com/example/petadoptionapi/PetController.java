@@ -27,10 +27,12 @@ public class PetController {
     public String updatePet(@PathVariable int id,
                             @RequestBody Pet pet) {
 
-        repository.updatePet(id,
+        repository.updatePet(
+                id,
                 pet.getName(),
                 pet.getType(),
-                pet.getAge());
+                pet.getAge()
+        );
 
         return "Pet updated successfully!";
     }
