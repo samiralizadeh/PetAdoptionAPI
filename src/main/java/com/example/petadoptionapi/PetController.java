@@ -14,13 +14,24 @@ public class PetController {
         this.repo = repo;
     }
 
-    @GetMapping("/hello")
-    public String hello() {
-        return "Hello, REST API works!";
+    @GetMapping("/pets")
+    public Iterable<Pet> getPets() {
+        return repo.findAll();
     }
 
-    @GetMapping("/pets")
-    public List<Pet> getPets() {
-        return repo.findAll();
+    @GetMapping("/pets/{id}")
+    public Pet getPetById(@PathVariable int id) {
+        return repo.findById(id).orElse(null);
+    }
+
+    @PostMapping("/pets")
+    public Pet addPet(@RequestBody Pet pet) {
+        return repo.save(pet);
+    }
+
+    @DeleteMapping("/pets/{id}")
+    public String deletePet(@PathVariable int id) {
+        repo.deleteById(id);
+        return "Pet deleted with id = " + id;
     }
 }
