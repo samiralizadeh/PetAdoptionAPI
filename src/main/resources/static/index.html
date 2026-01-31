@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Pet Adoption System</title>
+</head>
+<body>
+
+<h2>Pet Adoption System</h2>
+
+<h3>Add Pet</h3>
+
+<input id="name" placeholder="Name">
+<input id="type" placeholder="Type">
+<input id="age" placeholder="Age">
+<button onclick="addPet()">Add</button>
+
+<h3>Search</h3>
+
+<input id="search" placeholder="Search by name" onkeyup="renderPets()">
+
+<h3>Pets List</h3>
+
+<button onclick="sortByName()">Sort by Name</button>
+<button onclick="sortByAge()">Sort by Age</button>
+
+<table border="1" cellpadding="8">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody id="petsTable"></tbody>
+</table>
+
+<script>
+
+    let pets = [];
+    let sortMode = "";
+
+    function loadPets() {
+        fetch("/pets")
+            .then(r => r.json())
+            .then(data => {
+                pets = data;
+                renderPets();
+            });
+    }
+
+    function renderPets() {
+
+        let searchText = document.getElementById("search").value.toLowerCase();
+
+        let filtered = pets.filter(p =>
+            p.name.toLowerCase().includes(searchText)
+        );
+
+        if (sortMode === "name") {
+            filtered.sort((a, b) => a.name.localeCompare(b.name));
+        }
+
+        if (sortMode === "age") {
+            filtered.sort((a, b) => a.age - b.age);
+        }
+
+        let table = document.getElementById("petsTable");
+        table.innerHTML = "";
+
+        filtered.forEach(p => {
+            table.innerHTML += `
+                <tr>
+                    <td>${p.id}</td>
+                    <td>${p.type}</td>
+                    <td>${p.name}</td>
+                    <td>${p.age}</td>
+                    <td>
+                        <button onclick="deletePet(${p.id})">Delete</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function addPet() {
+
+        let pet = {
+            name: document.getElementById("name").value,
+            type: document.getElementById("type").value,
+            age: parseInt(document.getElementById("age").value)
+        };
+
+        fetch("/pets", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(pet)
+        })
+        .then(() => {
+            loadPets();
+        });
+    }
+
+    function deletePet(id) {
+        fetch("/pets/" + id, {
+            method: "DELETE"
+        })
+        .then(() => {
+            loadPets();
+        });
+    }
+
+    function sortByName() {
+        sortMode = "name";
+        renderPets();
+    }
+
+    function sortByAge() {
+        sortMode = "age";
+        renderPets();
+    }
+
+    loadPets();
+
+</script>
+
+</body>
+</html>
