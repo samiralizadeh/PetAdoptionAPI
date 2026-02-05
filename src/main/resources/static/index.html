@@ -67,10 +67,14 @@
 
     <h3>Add Pet</h3>
 
-    <input id="name" placeholder="Name">
-    <input id="type" placeholder="Type">
-    <input id="age" placeholder="Age">
+    <input id="name" placeholder="Name" pattern="[A-Za-z]+" title="Only letters allowed">
+    <select id="type">
+        <option value="Dog">Dog</option>
+        <option value="Cat">Cat</option>
+    </select>
+    <input id="age" type="number" placeholder="Age">
     <button onclick="addPet()">Add</button>
+    <p id="error" style="color:red;"></p>
 
     <h3>Search</h3>
 
@@ -116,33 +120,71 @@
             p.name.toLowerCase().includes(searchText)
         );
 
-        if (sortMode === "name") {
-            filtered.sort((a, b) => a.name.localeCompare(b.name));
-        }
-
-        if (sortMode === "age") {
-            filtered.sort((a, b) => a.age - b.age);
-        }
+        if (sortMode === "name") filtered.sort((a, b) => a.name.localeCompare(b.name));
+        if (sortMode === "age") filtered.sort((a, b) => a.age - b.age);
 
         let table = document.getElementById("petsTable");
         table.innerHTML = "";
 
         filtered.forEach(p => {
             table.innerHTML += `
-                <tr>
-                    <td>${p.id}</td>
-                    <td>${p.type}</td>
-                    <td>${p.name}</td>
-                    <td>${p.age}</td>
-                    <td>
-                        <button onclick="deletePet(${p.id})">Delete</button>
-                    </td>
-                </tr>
-            `;
+            <tr id="row-${p.id}">
+                <td>${p.id}</td>
+                <td>${p.type}</td>
+                <td>${p.name}</td>
+                <td>${p.age}</td>
+                <td>
+                    <button onclick="editPet(${p.id})">Edit</button>
+                    <button onclick="deletePet(${p.id})">Delete</button>
+                </td>
+            </tr>`;
+        });
+    }
+
+    function editPet(id) {
+        let pet = pets.find(p => p.id === id);
+
+        document.getElementById(`row-${id}`).innerHTML = `
+            <td>${pet.id}</td>
+            <td>
+                <select id="type-${id}">
+                    <option ${pet.type === "Dog" ? "selected" : ""}>Dog</option>
+                    <option ${pet.type === "Cat" ? "selected" : ""}>Cat</option>
+                </select>
+            </td>
+            <td><input id="name-${id}" value="${pet.name}"></td>
+            <td><input id="age-${id}" type="number" value="${pet.age}"></td>
+            <td>
+                <button onclick="savePet(${id})">Save</button>
+                <button onclick="loadPets()">Cancel</button>
+            </td>
+        `;
+    }
+
+    function savePet(id) {
+        let updatedPet = {
+            name: document.getElementById(`name-${id}`).value,
+            type: document.getElementById(`type-${id}`).value,
+            age: parseInt(document.getElementById(`age-${id}`).value)
+        };
+
+        fetch("/pets/" + id, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(updatedPet)
+        })
+        .then(r => {
+            if (!r.ok) return r.text().then(t => { throw new Error(t); });
+            loadPets();
+        })
+        .catch(err => {
+            alert(err.message);
         });
     }
 
     function addPet() {
+        document.getElementById("error").innerText = "";
+
         let pet = {
             name: document.getElementById("name").value,
             type: document.getElementById("type").value,
@@ -154,8 +196,12 @@
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(pet)
         })
-        .then(() => {
+        .then(r => {
+            if (!r.ok) return r.text().then(t => { throw new Error(t); });
             loadPets();
+        })
+        .catch(err => {
+            document.getElementById("error").innerText = err.message;
         });
     }
 
@@ -166,12 +212,12 @@
 
     function sortByName() {
         sortMode = "name";
-        renderPets();
+        loadPets();
     }
 
     function sortByAge() {
         sortMode = "age";
-        renderPets();
+        loadPets();
     }
 
     loadPets();

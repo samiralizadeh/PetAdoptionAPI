@@ -19,6 +19,19 @@ public class PetController {
 
     @PostMapping("/pets")
     public Pet addPet(@RequestBody Pet pet) {
+
+        if (pet.getAge() < 0) {
+            throw new InvalidAgeException("Age cannot be negative");
+        }
+
+        if (!pet.getName().matches("[A-Za-z]+")) {
+            throw new RuntimeException("Name must contain only letters");
+        }
+
+        if (!pet.getType().equals("Dog") && !pet.getType().equals("Cat")) {
+            throw new RuntimeException("Type must be Dog or Cat");
+        }
+
         repository.savePet(pet);
         return pet;
     }
