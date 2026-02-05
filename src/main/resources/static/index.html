@@ -3,42 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <title>Pet Adoption System</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 700px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        input, button {
+            padding: 8px;
+            margin: 5px;
+            border-radius: 6px;
+            border: none;
+        }
+
+        button {
+            cursor: pointer;
+            background: #4CAF50;
+            color: white;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        table {
+            width: 100%;
+            background: white;
+            border-collapse: collapse;
+            margin-top: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f2f2f2;
+        }
+    </style>
 </head>
+
 <body>
 
-<h2>Pet Adoption System</h2>
+<div class="container">
 
-<h3>Add Pet</h3>
+    <h2>Pet Adoption System</h2>
 
-<input id="name" placeholder="Name">
-<input id="type" placeholder="Type">
-<input id="age" placeholder="Age">
-<button onclick="addPet()">Add</button>
+    <h3>Add Pet</h3>
 
-<h3>Search</h3>
+    <input id="name" placeholder="Name">
+    <input id="type" placeholder="Type">
+    <input id="age" placeholder="Age">
+    <button onclick="addPet()">Add</button>
 
-<input id="search" placeholder="Search by name" onkeyup="renderPets()">
+    <h3>Search</h3>
 
-<h3>Pets List</h3>
+    <input id="search" placeholder="Search by name" onkeyup="renderPets()">
 
-<button onclick="sortByName()">Sort by Name</button>
-<button onclick="sortByAge()">Sort by Age</button>
+    <h3>Pets List</h3>
 
-<table border="1" cellpadding="8">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Age</th>
-        <th>Action</th>
-    </tr>
-    </thead>
-    <tbody id="petsTable"></tbody>
-</table>
+    <button onclick="sortByName()">Sort by Name</button>
+    <button onclick="sortByAge()">Sort by Age</button>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody id="petsTable"></tbody>
+    </table>
+
+</div>
 
 <script>
-
     let pets = [];
     let sortMode = "";
 
@@ -52,7 +110,6 @@
     }
 
     function renderPets() {
-
         let searchText = document.getElementById("search").value.toLowerCase();
 
         let filtered = pets.filter(p =>
@@ -86,7 +143,6 @@
     }
 
     function addPet() {
-
         let pet = {
             name: document.getElementById("name").value,
             type: document.getElementById("type").value,
@@ -104,12 +160,8 @@
     }
 
     function deletePet(id) {
-        fetch("/pets/" + id, {
-            method: "DELETE"
-        })
-        .then(() => {
-            loadPets();
-        });
+        fetch("/pets/" + id, { method: "DELETE" })
+            .then(() => loadPets());
     }
 
     function sortByName() {
@@ -123,7 +175,6 @@
     }
 
     loadPets();
-
 </script>
 
 </body>
